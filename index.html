@@ -1,199 +1,274 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
+  User,
   BookOpen,
   Brain,
+  TrendingUp,
   ChevronRight,
   CheckCircle,
-  Sparkles,
-  TrendingUp,
+  Award,
+  Zap,
+  Layers,
   Star,
   Clock,
-  Layers,
-  PlayCircle
+  PlayCircle,
+  Dna,
+  Cpu,
+  Palette,
+  Globe,
+  MessageCircle,
+  Calculator,
+  ArrowRight,
+  Phone
 } from "lucide-react";
 
-export default function App() {
+const App = () => {
 
   const [step,setStep]=useState(1)
 
   const [formData,setFormData]=useState({
     name:"",
     email:"",
+    phone:"",
+    gender:"",
+    grade:"",
+    institution:"",
+    bio:"",
     interests:[],
-    answers:{},
+    testAnswers:{},
     results:null
   })
 
   const subjects=[
-    {id:"math",name:"Mathematics"},
-    {id:"science",name:"Natural Sciences"},
-    {id:"tech",name:"Technology"},
-    {id:"arts",name:"Arts"},
-    {id:"social",name:"Social Sciences"},
-    {id:"comm",name:"Communication"}
+    {id:"math",name:"Mathematics",icon:<Calculator size={20}/>},
+    {id:"science",name:"Natural Sciences",icon:<Dna size={20}/>},
+    {id:"tech",name:"Technology & CS",icon:<Cpu size={20}/>},
+    {id:"arts",name:"Arts & Humanities",icon:<Palette size={20}/>},
+    {id:"social",name:"Social Sciences",icon:<Globe size={20}/>},
+    {id:"comm",name:"Communication",icon:<MessageCircle size={20}/>}
   ]
 
-  const questions=[
-    {id:"q1",q:"Do you enjoy discovering patterns or building systems?",options:["Patterns","Systems"]},
-    {id:"q2",q:"Do you prefer theory or practical problem solving?",options:["Theory","Practical"]},
-    {id:"q3",q:"Do you enjoy working solo or collaborating?",options:["Solo","Collaborative"]}
-  ]
+  const subjectQuestions={
+    math:[
+      {id:"m1",q:"When solving a proof, do you rely more on visualization or algebraic manipulation?",options:["Intuitive Visualization","Rigorous Algebra"]},
+      {id:"m2",q:"Do you prefer discovering existing patterns or creating new frameworks?",options:["Discovering Patterns","Creating Frameworks"]}
+    ],
+    science:[
+      {id:"s1",q:"In a lab setting, are you more focused on the experimental process or the resulting data?",options:["The Process","The Data Insight"]},
+      {id:"s2",q:"Does your curiosity lean towards the macroscopic (Planets/Ecosystems) or microscopic (Atoms/Cells)?",options:["Macroscopic","Microscopic"]}
+    ],
+    tech:[
+      {id:"t1",q:"Do you enjoy building the 'Engine' (Backend/Logic) or the 'Interface' (UX/UI)?",options:["Logic/Engine","UX/Interface"]},
+      {id:"t2",q:"How do you handle a bug: Systematic debugging or creative workarounds?",options:["Systematic","Creative"]}
+    ],
+    arts:[
+      {id:"a1",q:"Does your art aim to reflect reality or provoke an emotional response?",options:["Reflect Reality","Provoke Emotion"]},
+      {id:"a2",q:"Do you prefer working in isolation to perfect your craft or in collaborative groups?",options:["Isolation","Collaboration"]}
+    ],
+    social:[
+      {id:"so1",q:"When analyzing history, do you focus on the 'Great Leaders' or the 'Systemic Movements'?",options:["Individual Leaders","Social Movements"]},
+      {id:"so2",q:"Do you prefer Qualitative (Stories/Interviews) or Quantitative (Statistics/Trends) research?",options:["Qualitative","Quantitative"]}
+    ],
+    comm:[
+      {id:"c1",q:"In a debate, is your primary goal to reach a consensus or to stand your ground?",options:["Consensus","Persuasion"]},
+      {id:"c2",q:"Do you feel more powerful using the written word or the spoken word?",options:["Written","Spoken"]}
+    ]
+  }
+
+  const activeQuestions=formData.interests.flatMap(id=>subjectQuestions[id]||[])
+
+  const handleNext=()=>setStep(s=>s+1)
+  const handleBack=()=>setStep(s=>s-1)
 
   const toggleInterest=id=>{
     setFormData(prev=>{
       const interests=prev.interests.includes(id)
       ?prev.interests.filter(i=>i!==id)
       :[...prev.interests,id]
+
       return {...prev,interests}
     })
   }
 
   const calculateResults=()=>{
-    setFormData(prev=>({
-      ...prev,
-      results:[
-        {name:"Foundational Sage",score:86},
-        {name:"Applied Architect",score:73},
-        {name:"Innovation Master",score:51}
-      ]
-    }))
-    setStep(4)
+
+    const stages=[
+      {
+        name:"Foundational Sage",
+        score:80,
+        desc:"You possess strong conceptual foundations and learn well through teaching others.",
+        metrics:{speed:82,accuracy:95,leadership:60}
+      },
+      {
+        name:"Applied Architect",
+        score:67,
+        desc:"You are excellent at turning knowledge into real practical solutions.",
+        metrics:{speed:90,accuracy:72,leadership:85}
+      },
+      {
+        name:"Innovation Master",
+        score:52,
+        desc:"You show signs of high-level synthesis and innovative thinking.",
+        metrics:{speed:45,accuracy:65,leadership:95}
+      }
+    ]
+
+    const courses=formData.interests.map(int=>{
+      const sub=subjects.find(s=>s.id===int)
+      return{
+        id:Math.random(),
+        title:`${sub.name} for the Foundational Sage`,
+        duration:"6 Weeks",
+        level:"Intermediate",
+        instructor:`Dr ${sub.name} Pro`,
+        icon:sub.icon
+      }
+    })
+
+    setFormData(prev=>({...prev,results:stages,recommendedCourses:courses}))
+    handleNext()
   }
 
-  const Profile=()=>(
-    <div className="space-y-8">
+  const CredentialUI=()=>(
+    <div className="space-y-6">
 
       <h2 className="text-4xl font-bold text-[#EAEAEA]">Create Your Identity</h2>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-5">
 
         <input
-        placeholder="Full Name"
-        className="bg-[#111115] border border-[#222] p-4 rounded-xl text-[#EAEAEA]"
-        value={formData.name}
-        onChange={e=>setFormData({...formData,name:e.target.value})}
+          className="bg-[#111115] border border-[#1e1e25] rounded-xl p-4 text-[#EAEAEA]"
+          placeholder="Full Name"
+          value={formData.name}
+          onChange={e=>setFormData({...formData,name:e.target.value})}
         />
 
         <input
-        placeholder="Email"
-        className="bg-[#111115] border border-[#222] p-4 rounded-xl text-[#EAEAEA]"
-        value={formData.email}
-        onChange={e=>setFormData({...formData,email:e.target.value})}
+          className="bg-[#111115] border border-[#1e1e25] rounded-xl p-4 text-[#EAEAEA]"
+          placeholder="Email"
+          value={formData.email}
+          onChange={e=>setFormData({...formData,email:e.target.value})}
+        />
+
+        <input
+          className="bg-[#111115] border border-[#1e1e25] rounded-xl p-4 text-[#EAEAEA]"
+          placeholder="Phone"
+          value={formData.phone}
+          onChange={e=>setFormData({...formData,phone:e.target.value})}
         />
 
       </div>
 
       <button
-      onClick={()=>setStep(2)}
-      className="px-10 py-4 rounded-xl font-semibold text-white bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F] hover:scale-105 transition"
+        onClick={handleNext}
+        className="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F]"
       >
-      Continue
+        Continue
       </button>
 
     </div>
   )
 
-  const Interests=()=>(
-    <div className="space-y-10">
+  const InterestUI=()=>(
+    <div>
 
-      <h2 className="text-4xl font-bold text-[#EAEAEA]">Choose Your Domains</h2>
+      <h2 className="text-3xl font-bold text-[#EAEAEA] mb-6">Choose Interests</h2>
 
       <div className="grid md:grid-cols-3 gap-6">
 
         {subjects.map(sub=>(
           <button
-          key={sub.id}
-          onClick={()=>toggleInterest(sub.id)}
-          className={`p-6 rounded-xl border transition ${
-          formData.interests.includes(sub.id)
-          ? "border-[#FF0A78] bg-[#111115]"
-          : "border-[#222] bg-[#111115]"
-          }`}
+            key={sub.id}
+            onClick={()=>toggleInterest(sub.id)}
+            className={`p-6 rounded-xl bg-[#111115] border ${
+              formData.interests.includes(sub.id)
+                ?"border-[#FF0A78]"
+                :"border-[#1e1e25]"
+            }`}
           >
-
-          <p className="text-[#EAEAEA] font-semibold">{sub.name}</p>
-
-          {formData.interests.includes(sub.id) &&
-          <CheckCircle className="text-[#FF0A78] mt-2"/>}
-
+            <div className="text-[#FF0A78] mb-3">{sub.icon}</div>
+            <div className="text-[#EAEAEA]">{sub.name}</div>
           </button>
         ))}
 
       </div>
 
-      <button
-      onClick={()=>setStep(3)}
-      className="px-10 py-4 rounded-xl font-semibold text-white bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F]"
-      >
-      Generate Test
-      </button>
+      <div className="flex gap-4 mt-8">
+
+        <button
+          onClick={handleBack}
+          className="px-6 py-3 bg-[#111115] rounded-lg text-[#8B8B96]"
+        >
+          Back
+        </button>
+
+        <button
+          onClick={handleNext}
+          className="px-6 py-3 rounded-lg bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F] text-white"
+        >
+          Continue
+        </button>
+
+      </div>
 
     </div>
   )
 
-  const Test=()=>(
-    <div className="space-y-12">
+  const PsychologicalUI=()=>(
+    <div>
 
-      <h2 className="text-4xl font-bold text-[#EAEAEA]">AI Aptitude Test</h2>
+      <h2 className="text-3xl text-[#EAEAEA] mb-10">Cognitive Diagnostics</h2>
 
-      {questions.map((q,index)=>(
-        <div key={q.id} className="space-y-4">
+      {activeQuestions.map((q,i)=>(
+        <div key={q.id} className="mb-8">
 
-        <p className="text-[#EAEAEA] text-lg">{q.q}</p>
+          <p className="text-[#EAEAEA] mb-4">{q.q}</p>
 
-        <div className="flex gap-4">
+          <div className="grid md:grid-cols-2 gap-4">
 
-        {q.options.map(opt=>(
-          <button
-          key={opt}
-          onClick={()=>setFormData(prev=>({
-            ...prev,
-            answers:{...prev.answers,[q.id]:opt}
-          }))}
-          className={`px-6 py-3 rounded-xl border ${
-          formData.answers[q.id]===opt
-          ?"border-[#FF0A78] text-[#FF0A78]"
-          :"border-[#333] text-[#8B8B96]"
-          }`}
-          >
-          {opt}
-          </button>
-        ))}
+            {q.options.map(opt=>(
+              <button
+                key={opt}
+                onClick={()=>setFormData(prev=>({
+                  ...prev,
+                  testAnswers:{...prev.testAnswers,[q.id]:opt}
+                }))}
+                className="p-4 bg-[#111115] border border-[#1e1e25] rounded-xl text-[#EAEAEA]"
+              >
+                {opt}
+              </button>
+            ))}
 
-        </div>
+          </div>
 
         </div>
       ))}
 
       <button
-      onClick={calculateResults}
-      className="px-10 py-4 rounded-xl font-semibold text-white bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F]"
+        onClick={calculateResults}
+        className="w-full py-4 bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F] rounded-xl text-white font-bold"
       >
-      Finalize Analysis
+        Generate Results
       </button>
 
     </div>
   )
 
-  const Results=()=>(
-    <div className="space-y-12">
+  const PotentialUI=()=>(
+    <div>
 
-      <div className="flex items-center gap-4">
-        <TrendingUp className="text-[#FF0A78]" size={40}/>
-        <h2 className="text-4xl font-bold text-[#EAEAEA]">Your Potential Matrix</h2>
-      </div>
+      <h2 className="text-3xl text-[#EAEAEA] mb-10">Your Potential Matrix</h2>
 
       <div className="grid md:grid-cols-3 gap-6">
 
         {formData.results?.map((stage,i)=>(
-          <div
-          key={i}
-          className="bg-[#111115] p-8 rounded-2xl border border-[#222]"
-          >
+          <div key={i} className="bg-[#111115] p-6 rounded-xl">
 
-          <h3 className="text-xl font-semibold text-[#EAEAEA]">{stage.name}</h3>
+            <h3 className="text-xl text-[#FF0A78] mb-3">{stage.name}</h3>
 
-          <p className="text-[#FF0A78] text-3xl font-bold mt-2">{stage.score}%</p>
+            <p className="text-[#8B8B96] mb-4">{stage.desc}</p>
+
+            <p className="text-[#EAEAEA] font-bold">{stage.score}%</p>
 
           </div>
         ))}
@@ -201,88 +276,75 @@ export default function App() {
       </div>
 
       <button
-      onClick={()=>setStep(5)}
-      className="px-10 py-4 rounded-xl font-semibold text-white bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F]"
+        onClick={handleNext}
+        className="mt-10 px-8 py-4 bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F] text-white rounded-xl"
       >
-      View Learning Path
+        View Learning Path
       </button>
 
     </div>
   )
 
-  const Courses=()=>(
-    <div className="space-y-12">
+  const CoursesUI=()=>(
+    <div>
 
-      <h2 className="text-4xl font-bold text-[#EAEAEA]">
-      Your Personalized Roadmap
-      </h2>
+      <h2 className="text-3xl text-[#EAEAEA] mb-10">Recommended Learning Path</h2>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid md:grid-cols-2 gap-6">
 
-        {[1,2,3,4].map(i=>(
-          <div
-          key={i}
-          className="bg-[#111115] p-8 rounded-2xl border border-[#222]"
-          >
+        {formData.recommendedCourses?.map((course,i)=>(
+          <div key={i} className="bg-[#111115] p-6 rounded-xl">
 
-          <h3 className="text-xl text-[#EAEAEA] font-semibold mb-4">
-          StudySphere Course {i}
-          </h3>
+            <h3 className="text-[#EAEAEA] text-xl mb-2">{course.title}</h3>
 
-          <div className="flex items-center gap-4 text-[#8B8B96] text-sm mb-6">
-            <Clock size={16}/> 6 Weeks
-            <Layers size={16}/> Intermediate
-          </div>
+            <p className="text-[#8B8B96] mb-4">{course.duration}</p>
 
-          <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F] rounded-lg text-white">
-          Enrol <PlayCircle size={18}/>
-          </button>
+            <button className="px-5 py-2 rounded-lg bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F] text-white">
+              Enrol
+            </button>
 
           </div>
         ))}
 
       </div>
 
+      <button
+        onClick={()=>setStep(1)}
+        className="mt-10 text-[#8B8B96]"
+      >
+        Restart
+      </button>
+
     </div>
   )
 
-  return (
+  return(
 
     <div
-    className="min-h-screen p-10"
-    style={{
-      background:"#050507",
-      fontFamily:"Montserrat, sans-serif"
-    }}
+      style={{fontFamily:"Montserrat, sans-serif"}}
+      className="min-h-screen bg-[#050507] text-[#EAEAEA] p-10"
     >
 
-    <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap"
-    rel="stylesheet"
-    />
+      <header className="flex justify-between mb-16">
 
-    <header className="flex items-center gap-4 mb-16">
+        <div className="flex items-center gap-3 text-2xl font-bold">
+          <BookOpen className="text-[#FF0A78]" />
+          StudySphere AI
+        </div>
 
-      <div className="p-3 rounded-xl bg-[#111115] border border-[#222]">
-        <BookOpen className="text-[#FF0A78]"/>
-      </div>
+        <div className="text-[#8B8B96]">Protocol 1.0.4</div>
 
-      <h1 className="text-3xl font-bold text-[#EAEAEA]">
-      StudySphere <span className="text-[#FF0A78]">AI</span>
-      </h1>
+      </header>
 
-    </header>
-
-    <main className="max-w-4xl mx-auto">
-
-      {step===1 && <Profile/>}
-      {step===2 && <Interests/>}
-      {step===3 && <Test/>}
-      {step===4 && <Results/>}
-      {step===5 && <Courses/>}
-
-    </main>
+      {step===1&&<CredentialUI/>}
+      {step===2&&<InterestUI/>}
+      {step===3&&<PsychologicalUI/>}
+      {step===4&&<PotentialUI/>}
+      {step===5&&<CoursesUI/>}
 
     </div>
   )
+
 }
+
+export default App
