@@ -1,350 +1,535 @@
-import React, { useState } from 'react';
-import {
-  User,
-  BookOpen,
-  Brain,
-  TrendingUp,
-  ChevronRight,
-  CheckCircle,
-  Award,
-  Zap,
-  Layers,
-  Star,
-  Clock,
-  PlayCircle,
-  Dna,
-  Cpu,
-  Palette,
-  Globe,
-  MessageCircle,
-  Calculator,
-  ArrowRight,
-  Phone
-} from "lucide-react";
-
-const App = () => {
-
-  const [step,setStep]=useState(1)
-
-  const [formData,setFormData]=useState({
-    name:"",
-    email:"",
-    phone:"",
-    gender:"",
-    grade:"",
-    institution:"",
-    bio:"",
-    interests:[],
-    testAnswers:{},
-    results:null
-  })
-
-  const subjects=[
-    {id:"math",name:"Mathematics",icon:<Calculator size={20}/>},
-    {id:"science",name:"Natural Sciences",icon:<Dna size={20}/>},
-    {id:"tech",name:"Technology & CS",icon:<Cpu size={20}/>},
-    {id:"arts",name:"Arts & Humanities",icon:<Palette size={20}/>},
-    {id:"social",name:"Social Sciences",icon:<Globe size={20}/>},
-    {id:"comm",name:"Communication",icon:<MessageCircle size={20}/>}
-  ]
-
-  const subjectQuestions={
-    math:[
-      {id:"m1",q:"When solving a proof, do you rely more on visualization or algebraic manipulation?",options:["Intuitive Visualization","Rigorous Algebra"]},
-      {id:"m2",q:"Do you prefer discovering existing patterns or creating new frameworks?",options:["Discovering Patterns","Creating Frameworks"]}
-    ],
-    science:[
-      {id:"s1",q:"In a lab setting, are you more focused on the experimental process or the resulting data?",options:["The Process","The Data Insight"]},
-      {id:"s2",q:"Does your curiosity lean towards the macroscopic (Planets/Ecosystems) or microscopic (Atoms/Cells)?",options:["Macroscopic","Microscopic"]}
-    ],
-    tech:[
-      {id:"t1",q:"Do you enjoy building the 'Engine' (Backend/Logic) or the 'Interface' (UX/UI)?",options:["Logic/Engine","UX/Interface"]},
-      {id:"t2",q:"How do you handle a bug: Systematic debugging or creative workarounds?",options:["Systematic","Creative"]}
-    ],
-    arts:[
-      {id:"a1",q:"Does your art aim to reflect reality or provoke an emotional response?",options:["Reflect Reality","Provoke Emotion"]},
-      {id:"a2",q:"Do you prefer working in isolation to perfect your craft or in collaborative groups?",options:["Isolation","Collaboration"]}
-    ],
-    social:[
-      {id:"so1",q:"When analyzing history, do you focus on the 'Great Leaders' or the 'Systemic Movements'?",options:["Individual Leaders","Social Movements"]},
-      {id:"so2",q:"Do you prefer Qualitative (Stories/Interviews) or Quantitative (Statistics/Trends) research?",options:["Qualitative","Quantitative"]}
-    ],
-    comm:[
-      {id:"c1",q:"In a debate, is your primary goal to reach a consensus or to stand your ground?",options:["Consensus","Persuasion"]},
-      {id:"c2",q:"Do you feel more powerful using the written word or the spoken word?",options:["Written","Spoken"]}
-    ]
-  }
-
-  const activeQuestions=formData.interests.flatMap(id=>subjectQuestions[id]||[])
-
-  const handleNext=()=>setStep(s=>s+1)
-  const handleBack=()=>setStep(s=>s-1)
-
-  const toggleInterest=id=>{
-    setFormData(prev=>{
-      const interests=prev.interests.includes(id)
-      ?prev.interests.filter(i=>i!==id)
-      :[...prev.interests,id]
-
-      return {...prev,interests}
-    })
-  }
-
-  const calculateResults=()=>{
-
-    const stages=[
-      {
-        name:"Foundational Sage",
-        score:80,
-        desc:"You possess strong conceptual foundations and learn well through teaching others.",
-        metrics:{speed:82,accuracy:95,leadership:60}
-      },
-      {
-        name:"Applied Architect",
-        score:67,
-        desc:"You are excellent at turning knowledge into real practical solutions.",
-        metrics:{speed:90,accuracy:72,leadership:85}
-      },
-      {
-        name:"Innovation Master",
-        score:52,
-        desc:"You show signs of high-level synthesis and innovative thinking.",
-        metrics:{speed:45,accuracy:65,leadership:95}
-      }
-    ]
-
-    const courses=formData.interests.map(int=>{
-      const sub=subjects.find(s=>s.id===int)
-      return{
-        id:Math.random(),
-        title:`${sub.name} for the Foundational Sage`,
-        duration:"6 Weeks",
-        level:"Intermediate",
-        instructor:`Dr ${sub.name} Pro`,
-        icon:sub.icon
-      }
-    })
-
-    setFormData(prev=>({...prev,results:stages,recommendedCourses:courses}))
-    handleNext()
-  }
-
-  const CredentialUI=()=>(
-    <div className="space-y-6">
-
-      <h2 className="text-4xl font-bold text-[#EAEAEA]">Create Your Identity</h2>
-
-      <div className="grid md:grid-cols-2 gap-5">
-
-        <input
-          className="bg-[#111115] border border-[#1e1e25] rounded-xl p-4 text-[#EAEAEA]"
-          placeholder="Full Name"
-          value={formData.name}
-          onChange={e=>setFormData({...formData,name:e.target.value})}
-        />
-
-        <input
-          className="bg-[#111115] border border-[#1e1e25] rounded-xl p-4 text-[#EAEAEA]"
-          placeholder="Email"
-          value={formData.email}
-          onChange={e=>setFormData({...formData,email:e.target.value})}
-        />
-
-        <input
-          className="bg-[#111115] border border-[#1e1e25] rounded-xl p-4 text-[#EAEAEA]"
-          placeholder="Phone"
-          value={formData.phone}
-          onChange={e=>setFormData({...formData,phone:e.target.value})}
-        />
-
-      </div>
-
-      <button
-        onClick={handleNext}
-        className="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F]"
-      >
-        Continue
-      </button>
-
-    </div>
-  )
-
-  const InterestUI=()=>(
-    <div>
-
-      <h2 className="text-3xl font-bold text-[#EAEAEA] mb-6">Choose Interests</h2>
-
-      <div className="grid md:grid-cols-3 gap-6">
-
-        {subjects.map(sub=>(
-          <button
-            key={sub.id}
-            onClick={()=>toggleInterest(sub.id)}
-            className={`p-6 rounded-xl bg-[#111115] border ${
-              formData.interests.includes(sub.id)
-                ?"border-[#FF0A78]"
-                :"border-[#1e1e25]"
-            }`}
-          >
-            <div className="text-[#FF0A78] mb-3">{sub.icon}</div>
-            <div className="text-[#EAEAEA]">{sub.name}</div>
-          </button>
-        ))}
-
-      </div>
-
-      <div className="flex gap-4 mt-8">
-
-        <button
-          onClick={handleBack}
-          className="px-6 py-3 bg-[#111115] rounded-lg text-[#8B8B96]"
-        >
-          Back
-        </button>
-
-        <button
-          onClick={handleNext}
-          className="px-6 py-3 rounded-lg bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F] text-white"
-        >
-          Continue
-        </button>
-
-      </div>
-
-    </div>
-  )
-
-  const PsychologicalUI=()=>(
-    <div>
-
-      <h2 className="text-3xl text-[#EAEAEA] mb-10">Cognitive Diagnostics</h2>
-
-      {activeQuestions.map((q,i)=>(
-        <div key={q.id} className="mb-8">
-
-          <p className="text-[#EAEAEA] mb-4">{q.q}</p>
-
-          <div className="grid md:grid-cols-2 gap-4">
-
-            {q.options.map(opt=>(
-              <button
-                key={opt}
-                onClick={()=>setFormData(prev=>({
-                  ...prev,
-                  testAnswers:{...prev.testAnswers,[q.id]:opt}
-                }))}
-                className="p-4 bg-[#111115] border border-[#1e1e25] rounded-xl text-[#EAEAEA]"
-              >
-                {opt}
-              </button>
-            ))}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>StudySphere AI</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+background:#050507;
+color:white;
+font-family:Montserrat,sans-serif;
+cursor:none;
+}
+
+/* cursor */
+
+#cursor{
+position:fixed;
+width:25px;
+height:25px;
+border-radius:50%;
+background:#ff0a78;
+mix-blend-mode:difference;
+pointer-events:none;
+z-index:9999;
+}
+
+#trail{
+position:fixed;
+width:10px;
+height:10px;
+border-radius:50%;
+background:#ff0a78;
+opacity:.6;
+pointer-events:none;
+z-index:9998;
+}
+
+/* floating lights */
+
+.light{
+position:fixed;
+width:420px;
+height:420px;
+border-radius:50%;
+filter:blur(120px);
+opacity:.35;
+z-index:-1;
+animation:float 15s infinite ease-in-out;
+}
+
+.l1{background:#ff0a78;left:10%;top:20%}
+.l2{background:#6b5cff;right:10%;top:40%}
+.l3{background:#00d2ff;left:30%;bottom:10%}
+
+@keyframes float{
+0%,100%{transform:translateY(0)}
+50%{transform:translateY(-80px)}
+}
+
+/* UI */
+
+.card{
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(20px);
+border-radius:20px;
+padding:40px;
+border:1px solid rgba(255,255,255,.1);
+}
+
+.section{
+display:none;
+min-height:100vh;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+padding:40px;
+}
+
+.section.active{
+display:flex;
+}
+
+.option{
+background:#0d0d11;
+padding:18px;
+border-radius:12px;
+cursor:pointer;
+transition:.2s;
+}
 
-          </div>
-
-        </div>
-      ))}
-
-      <button
-        onClick={calculateResults}
-        className="w-full py-4 bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F] rounded-xl text-white font-bold"
-      >
-        Generate Results
-      </button>
-
-    </div>
-  )
-
-  const PotentialUI=()=>(
-    <div>
-
-      <h2 className="text-3xl text-[#EAEAEA] mb-10">Your Potential Matrix</h2>
-
-      <div className="grid md:grid-cols-3 gap-6">
-
-        {formData.results?.map((stage,i)=>(
-          <div key={i} className="bg-[#111115] p-6 rounded-xl">
-
-            <h3 className="text-xl text-[#FF0A78] mb-3">{stage.name}</h3>
-
-            <p className="text-[#8B8B96] mb-4">{stage.desc}</p>
-
-            <p className="text-[#EAEAEA] font-bold">{stage.score}%</p>
-
-          </div>
-        ))}
-
-      </div>
-
-      <button
-        onClick={handleNext}
-        className="mt-10 px-8 py-4 bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F] text-white rounded-xl"
-      >
-        View Learning Path
-      </button>
-
-    </div>
-  )
-
-  const CoursesUI=()=>(
-    <div>
-
-      <h2 className="text-3xl text-[#EAEAEA] mb-10">Recommended Learning Path</h2>
-
-      <div className="grid md:grid-cols-2 gap-6">
-
-        {formData.recommendedCourses?.map((course,i)=>(
-          <div key={i} className="bg-[#111115] p-6 rounded-xl">
-
-            <h3 className="text-[#EAEAEA] text-xl mb-2">{course.title}</h3>
-
-            <p className="text-[#8B8B96] mb-4">{course.duration}</p>
-
-            <button className="px-5 py-2 rounded-lg bg-gradient-to-r from-[#FF0A78] to-[#FF2D8F] text-white">
-              Enrol
-            </button>
-
-          </div>
-        ))}
-
-      </div>
-
-      <button
-        onClick={()=>setStep(1)}
-        className="mt-10 text-[#8B8B96]"
-      >
-        Restart
-      </button>
-
-    </div>
-  )
-
-  return(
-
-    <div
-      style={{fontFamily:"Montserrat, sans-serif"}}
-      className="min-h-screen bg-[#050507] text-[#EAEAEA] p-10"
-    >
-
-      <header className="flex justify-between mb-16">
-
-        <div className="flex items-center gap-3 text-2xl font-bold">
-          <BookOpen className="text-[#FF0A78]" />
-          StudySphere AI
-        </div>
-
-        <div className="text-[#8B8B96]">Protocol 1.0.4</div>
-
-      </header>
-
-      {step===1&&<CredentialUI/>}
-      {step===2&&<InterestUI/>}
-      {step===3&&<PsychologicalUI/>}
-      {step===4&&<PotentialUI/>}
-      {step===5&&<CoursesUI/>}
-
-    </div>
-  )
+.option:hover{
+background:#ff0a7820;
+transform:scale(1.03);
+}
+
+.module{
+background:#0d0d11;
+padding:18px;
+border-radius:12px;
+margin-top:10px;
+}
+
+.gradient{
+background:linear-gradient(135deg,#ff0a78,#ff2d8f);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.btn{
+background:linear-gradient(135deg,#ff0a78,#ff2d8f);
+padding:14px;
+border-radius:12px;
+margin-top:15px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="cursor"></div>
+<div id="trail"></div>
+
+<div class="light l1"></div>
+<div class="light l2"></div>
+<div class="light l3"></div>
+
+<!-- INTRO -->
+
+<div id="intro" class="section active">
+
+<h1 class="text-6xl font-black gradient mb-4">
+StudySphere
+</h1>
+
+<p class="text-gray-400">
+AI Talent Discovery Engine
+</p>
+
+</div>
+
+<!-- PROFILE -->
+
+<div id="profile" class="section">
+
+<div class="card max-w-xl w-full">
+
+<h2 class="text-3xl mb-6">Basic Information</h2>
+
+<input id="name" class="w-full p-3 bg-black rounded mb-3" placeholder="Name">
+
+<input id="age" class="w-full p-3 bg-black rounded mb-3" placeholder="Age">
+
+<select id="occupation" class="w-full p-3 bg-black rounded mb-3">
+<option>Student</option>
+<option>Professional</option>
+<option>Entrepreneur</option>
+</select>
+
+<select id="qualification" class="w-full p-3 bg-black rounded mb-3">
+<option>School</option>
+<option>Bachelor</option>
+<option>Master</option>
+<option>PhD</option>
+</select>
+
+<button class="btn w-full" onclick="startDiscovery()">Continue</button>
+
+</div>
+
+</div>
+
+<!-- QUIZ -->
+
+<div id="quiz" class="section">
+
+<div class="card max-w-xl w-full">
+
+<h2 id="question" class="text-xl mb-6"></h2>
+
+<div id="options" class="space-y-3"></div>
+
+</div>
+
+</div>
+
+<!-- LOADING -->
+
+<div id="loading" class="section">
+
+<h2 class="text-3xl gradient">
+Analyzing your potential...
+</h2>
+
+</div>
+
+<!-- COURSE OPTIONS -->
+
+<div id="courses" class="section">
+
+<div class="card max-w-xl w-full">
+
+<h2 class="text-3xl gradient mb-6">
+Recommended Courses
+</h2>
+
+<div id="courseOptions"></div>
+
+</div>
+
+</div>
+
+<!-- GENERATED COURSE -->
+
+<div id="generated" class="section">
+
+<div class="card max-w-xl w-full">
+
+<h2 id="courseTitle" class="text-3xl gradient mb-4"></h2>
+
+<p id="stats"></p>
+
+<h3 class="mt-5 mb-3">Course Roadmap</h3>
+
+<div id="modules"></div>
+
+</div>
+
+</div>
+
+<script>
+
+/* cursor */
+
+const cursor=document.getElementById("cursor")
+const trail=document.getElementById("trail")
+
+let tx=0,ty=0
+
+window.addEventListener("mousemove",e=>{
+cursor.style.left=e.clientX+"px"
+cursor.style.top=e.clientY+"px"
+
+tx+=(e.clientX-tx)*0.2
+ty+=(e.clientY-ty)*0.2
+
+trail.style.left=tx+"px"
+trail.style.top=ty+"px"
+})
+
+/* navigation */
+
+function show(id){
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"))
+document.getElementById(id).classList.add("active")
+}
+
+setTimeout(()=>show("profile"),2000)
+
+/* talent engine */
+
+let talentScore={
+AI:0,
+Design:0,
+Business:0,
+Data:0
+}
+
+const discoveryQuestions=[
+
+{
+q:"You enjoy solving problems by",
+o:[
+{text:"Building algorithms",talent:"AI"},
+{text:"Designing visuals",talent:"Design"},
+{text:"Launching products",talent:"Business"},
+{text:"Analyzing datasets",talent:"Data"}
+]
+},
+
+{
+q:"Your thinking style",
+o:[
+{text:"Logical",talent:"AI"},
+{text:"Creative",talent:"Design"},
+{text:"Strategic",talent:"Business"},
+{text:"Analytical",talent:"Data"}
+]
+},
+
+{
+q:"What excites you most?",
+o:[
+{text:"AI systems",talent:"AI"},
+{text:"User experience",talent:"Design"},
+{text:"Startups",talent:"Business"},
+{text:"Data insights",talent:"Data"}
+]
+}
+
+]
+
+let dq=0
+
+function startDiscovery(){
+dq=0
+show("quiz")
+renderDiscovery()
+}
+
+function renderDiscovery(){
+
+if(dq>=discoveryQuestions.length){
+computeTalent()
+return
+}
+
+let q=discoveryQuestions[dq]
+
+document.getElementById("question").innerText=q.q
+
+let opt=document.getElementById("options")
+opt.innerHTML=""
+
+q.o.forEach(option=>{
+
+let d=document.createElement("div")
+
+d.className="option"
+
+d.innerText=option.text
+
+d.onclick=()=>{
+talentScore[option.talent]++
+dq++
+renderDiscovery()
+}
+
+opt.appendChild(d)
+
+})
 
 }
 
-export default App
+/* compute talent */
+
+let userTalent=""
+
+function computeTalent(){
+
+userTalent = Object.keys(talentScore).reduce((a,b)=>
+talentScore[a]>talentScore[b]?a:b)
+
+skillQuiz()
+
+}
+
+/* skill quiz */
+
+let skillScore=0
+
+const skillQuestions=[
+
+{
+q:"Your experience level?",
+o:["Beginner","Intermediate","Advanced"]
+},
+
+{
+q:"How fast do you learn new tools?",
+o:["Slow","Moderate","Fast"]
+}
+
+]
+
+let sq=0
+
+function skillQuiz(){
+sq=0
+show("quiz")
+renderSkill()
+}
+
+function renderSkill(){
+
+if(sq>=skillQuestions.length){
+analysis()
+return
+}
+
+let q=skillQuestions[sq]
+
+document.getElementById("question").innerText=q.q
+
+let opt=document.getElementById("options")
+opt.innerHTML=""
+
+q.o.forEach((t,i)=>{
+
+let d=document.createElement("div")
+
+d.className="option"
+
+d.innerText=t
+
+d.onclick=()=>{
+skillScore+=i
+sq++
+renderSkill()
+}
+
+opt.appendChild(d)
+
+})
+
+}
+
+/* analysis */
+
+let potential
+let level
+
+function analysis(){
+
+show("loading")
+
+setTimeout(()=>{
+
+potential = 70 + skillScore*5
+
+level="Beginner"
+if(skillScore>=2) level="Intermediate"
+if(skillScore>=4) level="Advanced"
+
+showCourses()
+
+},2000)
+
+}
+
+/* course library */
+
+const courseLibrary={
+
+AI:["Machine Learning Engineer","AI Researcher","Deep Learning Engineer"],
+
+Design:["UI UX Design","Product Design","Interaction Design"],
+
+Business:["Startup Builder","Product Manager","Growth Strategist"],
+
+Data:["Data Scientist","Data Analyst","Machine Learning Analyst"]
+
+}
+
+/* show course options */
+
+function showCourses(){
+
+show("courses")
+
+let container=document.getElementById("courseOptions")
+container.innerHTML=""
+
+courseLibrary[userTalent].forEach((c,i)=>{
+
+let div=document.createElement("div")
+
+div.className="option mb-3"
+
+div.innerText=c
+
+div.onclick=()=>generateCourse(c)
+
+container.appendChild(div)
+
+})
+
+}
+
+/* generate course */
+
+function generateCourse(title){
+
+show("generated")
+
+document.getElementById("courseTitle").innerText=title
+
+document.getElementById("stats").innerHTML=
+
+`Talent: ${userTalent}<br>
+Level: ${level}<br>
+Potential: ${potential}%<br>
+Price: ₹${potential>85?2999:1499}/month`
+
+let modules=[
+"Foundations",
+"Core Concepts",
+"Tools & Frameworks",
+"Real Projects",
+"Portfolio Development"
+]
+
+if(level==="Advanced")
+modules.push("Industry Capstone Project")
+
+let mod=document.getElementById("modules")
+mod.innerHTML=""
+
+modules.forEach((m,i)=>{
+
+let div=document.createElement("div")
+div.className="module"
+div.innerHTML=`Module ${i+1}: ${m}`
+
+mod.appendChild(div)
+
+})
+
+gsap.from(".module",{opacity:0,y:30,stagger:.2})
+
+}
+
+</script>
+
+</body>
+</html>
